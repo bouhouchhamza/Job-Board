@@ -33,7 +33,7 @@ export function applyFilters(offers, state) {
 export function applySort(offers, sortBy) {
   const sorted = [...offers];
 
-  switch (sortBy) {
+  switch (sortBy) { 
     case "recent":
       return sorted.sort((a, b) => new Date(b.datePublication) - new Date(a.datePublication));
     case "oldest":

@@ -6,7 +6,7 @@ export async function fetchOffers() {
   const data = await response.json();
   return data;
 }
-async function fetchOfferById(id) {
+export async function fetchOfferById(id) {
   const offers = await fetchOffers();
   const offerById = offers.find((offer) => (offer.id === id));
 

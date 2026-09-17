@@ -1,11 +1,13 @@
+import { fetchOfferById } from "./data.js";
 const params = new URLSearchParams(window.location.search);
+
 const detailContainer = document.querySelector("#offer-detail");
 const idParam = params.get("id");
 const id = Number(idParam);
 // console.log(id)
 // console.log(typeof(id))
 
-async function initDetail() {
+export async function initDetail() {
   //   console.log(offer.profilRecherche);
   //   console.log(typeof offer.profilRecherche);
   //   console.log(Array.isArray(offer.profilRecherche));

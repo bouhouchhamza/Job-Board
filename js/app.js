@@ -1,12 +1,11 @@
-import { fetchOffers } from "./data.js";
+import { fetchOffers} from "./data.js";
 import { renderOffers, renderLoading, renderError } from "./render.js";
 import { filterState, applyFilters, applySort } from "./filters.js";
+import { toggleFollowOffer, getFollowedOfferIds } from "./storage.js";
 
-// 2. Select the sort dropdown
+
 const sortSelect = document.querySelector("#sort-select");
-
-// Select your HTML container element
-const container = document.querySelector("#offers-container"); // Adjust selector to match your HTML
+const container = document.querySelector("#offers-container"); 
 const searchInput = document.querySelector("#search-input");
 const citySelect = document.querySelector("#filter-city");
 const techSelect = document.querySelector("#filter-tech");
@@ -27,7 +26,7 @@ function updateUI() {
   renderOffers(sortedAndFiltered, container);
 }
 function populateDropdowns(offers) {
-  // 1. Extract unique values using Set
+
   const cities = [...new Set(offers.map(o => o.ville))];
   const contracts = [...new Set(offers.map(o => o.typeContrat))];
   const techs = [...new Set(offers.flatMap(o => o.technologies))];
@@ -58,11 +57,26 @@ async function init() {
     sortSelect.addEventListener("change", updateUI);
 
     filterForm.addEventListener("reset", () => {
-      setTimeout(updateUI, 0);})
+    setTimeout(updateUI, 0);})
+    updateFollowedBadge();
+    container.addEventListener("click", (e) => {
+      const followBtn = e.target.closest(".btn-follow");
+      if (!followBtn) return;
+      const offerId = followBtn.dataset.id;
+      toggleFollowOffer(offerId);
+      followBtn.classList.toggle("active");
+      followBtn.textContent = followBtn.classList.contains("active") ? "★" : "☆";
+      updateFollowedBadge();
+    });
   } catch (error) {
     console.error(error);
     renderError(container);
   }
 }
-
+function updateFollowedBadge() {
+  const badge = document.querySelector('a[href="offres-suivies.html"]');
+  if (!badge) return;
+  const count = getFollowedOfferIds().length;
+  badge.textContent = `Offres suivies (${count})`;
+}
 init();

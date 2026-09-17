@@ -18,8 +18,16 @@
     </div>
   </div>
 </header>
-<main class="page-space"><div class="container"><div class="follow-top"><div><span class="eyebrow">▣ ESPACE APPRENANT • STOCKAGE LOCAL (LOCALSTORAGE)</span><h1>Mes offres suivies</h1><p class="muted">Retrouvez et gérez les opportunités que vous avez enregistrées depuis votre navigateur.</p></div><div class="follow-actions"><div class="saved-count">▣ <strong>2 offres enregistrées</strong></div><button class="btn btn-secondary">▥ Tout effacer</button></div></div><div class="follow-title-row"><h2>Opportunités actives <span class="summary-chip">Temps réel</span></h2><span class="muted">Synchronisé automatiquement</span></div><div class="saved-grid"><article class="card saved-card"><div class="saved-card-main"><div class="job-head"><div class="job-title-wrap"><div class="logo-box">TN</div><div><h3>Développeur Full Stack Junior</h3><div class="company-line">TechNova • Casablanca</div></div></div><span class="badge badge-contract">Alternance</span></div><p class="job-description">Rejoignez notre équipe pour participer au développement d'applications web modernes et évolutives basées sur l'écosystème MERN.</p><div class="badges"><span class="badge">React</span><span class="badge">Node.js</span><span class="badge">MongoDB</span></div></div><div class="saved-card-footer"><div class="job-date">◷ 08 sept. 2026</div><div class="job-actions"><a class="btn btn-primary" href="offre-detail.html">Voir l'offre →</a><button class="btn btn-secondary" type="button">✕ Retirer</button></div></div></article><article class="card saved-card"><div class="saved-card-main"><div class="job-head"><div class="job-title-wrap"><div class="logo-box">AD</div><div><h3>Développeur Frontend React</h3><div class="company-line">Atlas Digital • Rabat</div></div></div><span class="badge badge-contract">Stage</span></div><p class="job-description">Stage de fin d'études pour participer à la refonte de nos interfaces clients et créer une expérience utilisateur réactive et ergonomique.</p><div class="badges"><span class="badge">React</span><span class="badge">JavaScript</span><span class="badge">TailwindCSS</span></div></div><div class="saved-card-footer"><div class="job-date">◷ 06 sept. 2026</div><div class="job-actions"><a class="btn btn-primary" href="offre-detail.html">Voir l'offre →</a><button class="btn btn-secondary" type="button">✕ Retirer</button></div></div></article></div><section class="large-empty"><div class="follow-title-row"><h2>▣ Aperçu de l'état vide (Quand aucune offre n'est suivie)</h2><span class="summary-chip">Module démonstratif pédagogique</span></div><div class="empty-box"><div class="empty-inner"><div class="empty-icon">♧</div><h2>Aucune offre suivie</h2><p class="muted">Vous n'avez pas encore enregistré d'offre. Parcourez la liste des offres et cliquez sur “♡ Suivre” pour les retrouver ici.</p><a class="btn btn-primary" href="index.html">⌕ Découvrir les offres</a></div></div></section></div></main>
-<footer class="site-footer">
+<main class="page-space">
+  <div class="container">
+    <div class="follow-top">
+      <h1>Mes offres suivies</h1>
+      <!-- renderOffers a besoin de cet ID pour ne pas planter : -->
+      <h2 id="results-count">0 offres disponibles</h2> 
+    </div>
+    <div id="saved-container" class="jobs-grid"></div>
+  </div>
+</main><footer class="site-footer">
   <div class="container footer-row">
     <div><div class="footer-title">JobBoard — Portail Stages & Alternances</div><div class="footer-sub">Projet Académique MERN 2026/2027</div></div>
     <nav class="footer-links" aria-label="Navigation secondaire">
@@ -32,4 +40,5 @@
   <a class="" href="deposer-offre.html"><span class="bottom-icon">▤</span><span>Déposer</span></a>
   <a class="active" href="offres-suivies.html"><span class="bottom-icon">♧</span><span>Suivies</span></a>
   <a class="" href="admin.html"><span class="bottom-icon">♙</span><span>Admin</span></a>
-</nav></body></html>
+</nav>
+<script type="module" src="./js/suivies.js"></script></body></html>
