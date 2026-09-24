@@ -1,8 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const pool = require("./config/db");
+const path = require("path");
+// const pool = require("./config/db");
 const offerRepository = require("./repositories/offreRepository");
 const app = express();
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   console.log("Request received: ", req.method, req.url);
@@ -54,7 +57,9 @@ app.get("/offer/:id", async (req, res) => {
       });
     }
 
-    res.json(offer);
+    res.render("offer-detail", {
+      offer,
+    });
   } catch (error) {
     console.error(error);
 
@@ -65,12 +70,37 @@ app.get("/offer/:id", async (req, res) => {
 });
 app.get("/offers", async (req, res) => {
   try {
-    const offers = await offerRepository.getAllOffers();
-    res.json(offers);
+    const ville = req.query.ville;
+    const type_contrat = req.query.type_contrat;
+    const technologie = req.query.technologie;
+    const search = req.query.search;
+    const sort = req.query.sort;
+    const offers = await offerRepository.getAllOffers({
+      ville,
+      type_contrat,
+      technologie,
+      search,
+      sort,
+    });
+    res.render("offers", {
+      offers,
+      filters: {
+        ville,
+        type_contrat,
+        technologie,
+        search,
+        sort,
+      },
+    });
   } catch (error) {
     console.error("ERROR: ", error);
     res.status(500).send("Error serveur");
   }
+});
+app.get("/test.ejs", (req, res) => {
+  res.render("test", {
+    message: "EJS fonctionne",
+  });
 });
 app.listen(3000, () => {
   console.log("server is running on port 3000");

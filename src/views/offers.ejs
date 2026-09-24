@@ -1,0 +1,76 @@
+<form action="/offers" method="GET">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Rechercher..."
+        value="<%= filters.search || '' %>"
+    >
+
+    <input
+        type="text"
+        name="ville"
+        placeholder="Ville"
+        value="<%= filters.ville || '' %>"
+    >
+
+    <input
+        type="text"
+        name="technologie"
+        placeholder="Technologie"
+        value="<%= filters.technologie || '' %>"
+    >
+
+    <select name="type_contrat">
+        <option value="">Tous les contrats</option>
+
+        <option value="CDI"
+            <%= filters.type_contrat === "CDI" ? "selected" : "" %>>
+            CDI
+        </option>
+
+        <option value="CDD"
+            <%= filters.type_contrat === "CDD" ? "selected" : "" %>>
+            CDD
+        </option>
+
+        <option value="Stage"
+            <%= filters.type_contrat === "Stage" ? "selected" : "" %>>
+            Stage
+        </option>
+    </select>
+
+    <select name="sort">
+        <option value="newest"
+            <%= filters.sort !== "oldest" ? "selected" : "" %>>
+            Plus récentes
+        </option>
+
+        <option value="oldest"
+            <%= filters.sort === "oldest" ? "selected" : "" %>>
+            Plus anciennes
+        </option>
+    </select>
+
+    <button type="submit">
+        Filtrer
+    </button>
+
+</form>
+<p><%= offers.length %> offres trouvées</p>
+
+<% offers.forEach((offer) => { %>
+
+  <article>
+    <h2><%= offer.titre %></h2>
+
+    <p><%= offer.entreprise %></p>
+    <p><%= offer.ville %></p>
+    <p><%= offer.type_contrat %></p>
+
+    <a href="/offer/<%= offer.id %>">
+      Voir l'offre
+    </a>
+  </article>
+
+<% }) %>

@@ -1,6 +1,52 @@
 const pool = require("../config/db");
 
-async function getAllOffers() {
+async function getAllOffers(filters = {}) {
+  const conditions = [];
+  const params = [];
+  if (filters.ville) {
+    conditions.push("o.ville = ?");
+    params.push(filters.ville);
+  }
+  if (filters.type_contrat) {
+    conditions.push("o.type_contrat = ?");
+    params.push(filters.type_contrat);
+  }
+  if (filters.technologie) {
+    conditions.push(`
+          EXISTS (
+          SELECT 1
+          FROM offre_technologie ot_filter
+          JOIN technologie t_filter
+          ON t_filter.id = ot_filter.technologie_id
+          WHERE ot_filter.offre_id = o.id
+          AND t_filter.nom =  ? )
+        `);
+    params.push(filters.technologie);
+  }
+  if (filters.search) {
+    conditions.push(`
+        (o.titre LIKE ? 
+        OR o.description_courte LIKE ?
+        OR o.description LIKE ?
+        OR  o.profil_recherche LIKE ?
+        OR e.nom LIKE ? 
+        )
+        `);
+    const searchValue = `%${filters.search}%`;
+    params.push(
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+    );
+  }
+  const whereClause =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}  ` : "";
+  let orderBy = "o.date_publication DESC";
+  if (filters.sort === "oldest") {
+    orderBy = "o.date_publication ASC";
+  }
   const [rows] = await pool.execute(
     `SELECT 
             o.id,
@@ -18,8 +64,10 @@ async function getAllOffers() {
         JOIN entreprise e ON e.id = o.entreprise_id
         LEFT JOIN offre_technologie ot ON ot.offre_id = o.id
         LEFT JOIN technologie t ON t.id = ot.technologie_id
+        ${whereClause}
         GROUP BY o.id, e.nom
-        ORDER BY o.date_publication DESC`,
+        ORDER BY ${orderBy}`,
+    params,
   );
   return rows;
 }
