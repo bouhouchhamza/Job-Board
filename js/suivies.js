@@ -2,9 +2,7 @@ import { fetchOffers } from "./data.js";
 import { renderOffers, renderLoading, renderError } from "./render.js";
 import { getFollowedOfferIds, toggleFollowOffer } from "./storage.js";
 
-const container =
-  document.querySelector(".saved-grid") ||
-  document.querySelector("#saved-container");
+const container = document.querySelector("#saved-container");
 let followedOffers = [];
 
 function updateFollowedBadge() {
