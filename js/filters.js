@@ -23,7 +23,6 @@ export function applyFilters(offers, state) {
       offer.technologies.some(
         (item) => item.toLowerCase() === state.technologies.toLowerCase(),
       );
-
     const matchesSearch =
       query === "" || offer.titre.toLowerCase().includes(query);
 
