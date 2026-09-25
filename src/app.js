@@ -5,7 +5,6 @@ const path = require("path");
 const offerRepository = require("./repositories/offreRepository");
 const entrepriseRepository = require("./repositories/entrepriseRepository");
 const technologieRepository = require("./repositories/technologieRepository");
-const { promises } = require("dns");
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -43,19 +42,48 @@ app.get("/admin/offers", async (req, res) => {
 //   console.log(req.body);
 //   res.send("data recue");
 // })
-app.get('/admin/offers/new',async(req,res)=>{
-  try{
-    const[entreprises,technologies] = await Promise.all([
+app.get("/admin/offers/new", async (req, res) => {
+  try {
+    const [entreprises, technologies] = await Promise.all([
       entrepriseRepository.getAllEntreprises(),
       technologieRepository.getAllTechnologies(),
     ]);
-    res.render('admin/new-offer',{
+    res.render("admin/new-offer", {
       entreprises,
       technologies,
-    })
-  }catch(error){
+    });
+  } catch (error) {
     console.error(error);
-      res.status(500).send('Erreur serveur');
+    res.status(500).send("Erreur serveur");
+  }
+});
+app.post("/admin/offers", async (req, res) => {
+  try {
+    let technologies = req.body.technologies || [];
+    if (!Array.isArray(technologies)) {
+      technologies = [technologies];
+    }
+    technologies = technologies
+      .map((id) => Number(id))
+      .filter((id) => !Number.isNaN(id));
+    const offerData = {
+      titre: req.body.titre,
+      description_courte: req.body.description_courte,
+      description: req.body.description,
+      profil_recherche: req.body.profil_recherche,
+      ville: req.body.ville,
+      type_contrat: req.body.type_contrat,
+      date_publication: req.body.date_publication,
+      lien_candidature: req.body.lien_candidature,
+      entreprise_id: Number(req.body.entreprise_id),
+      technologies,
+    };
+    await offerRepository.createOffer(offerData);
+    res.redirect("/admin/offers");
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).send("Erreur lors de création de l'offre");
   }
 });
 app.get("/", (req, res) => {
