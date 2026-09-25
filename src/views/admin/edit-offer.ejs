@@ -1,0 +1,53 @@
+<%- include("../partials/header", {
+  title: "Modifier une offre",
+  currentPage: "admin"
+}) %>
+
+<main class="page-space">
+
+  <div class="container">
+
+    <div class="follow-top">
+
+      <div>
+
+        <span class="eyebrow">
+          ♙ ESPACE ADMINISTRATION
+        </span>
+
+        <h1>Modifier l'offre</h1>
+
+        <p class="muted">
+          Modifiez les informations de l'offre sélectionnée.
+        </p>
+
+      </div>
+
+      <a
+        href="/admin/offers"
+        class="btn btn-secondary"
+      >
+        ← Retour aux offres
+      </a>
+
+    </div>
+
+
+    <%- include("partials/offer-form", {
+      formAction: `/admin/offers/${offer.id}/edit`,
+      submitLabel: "Enregistrer les modifications",
+      offer,
+      entreprises,
+      technologies,
+      selectedTechnologyIds
+    }) %>
+
+  </div>
+
+</main>
+
+<%- include("../partials/mobile-nav", {
+  currentPage: "admin"
+}) %>
+
+<%- include("../partials/footer") %>
