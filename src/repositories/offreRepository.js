@@ -73,10 +73,50 @@ async function getAllOffers(filters = {}) {
 }
 async function getOfferById(id) {
   const [rows] = await pool.execute(
-    ` SELECT o.id,o.titre,o.description_courte,o.description,o.profil_recherche,o.ville,o.type_contrat,o.date_publication,o.lien_candidature, e.nom AS entreprise, GROUP_CONCAT(t.nom SEPARATOR ",")  AS technologies FROM offre o JOIN entreprise e ON e.id = o.entreprise_id LEFT JOIN offre_technologie ot ON ot.offre_id = o.id LEFT JOIN technologie t ON t.id = ot.technologie_id WHERE o.id = ? GROUP BY o.id,e.nom
-        `,
+    `
+    SELECT
+      o.id,
+      o.titre,
+      o.description_courte,
+      o.description,
+      o.profil_recherche,
+      o.ville,
+      o.type_contrat,
+      o.date_publication,
+      o.lien_candidature,
+      o.entreprise_id,
+      e.nom AS entreprise,
+
+      GROUP_CONCAT(
+        DISTINCT t.nom
+        ORDER BY t.nom
+        SEPARATOR ','
+      ) AS technologies,
+
+      GROUP_CONCAT(
+        DISTINCT t.id
+        ORDER BY t.id
+        SEPARATOR ','
+      ) AS technologie_ids
+
+    FROM offre o
+
+    JOIN entreprise e
+      ON e.id = o.entreprise_id
+
+    LEFT JOIN offre_technologie ot
+      ON ot.offre_id = o.id
+
+    LEFT JOIN technologie t
+      ON t.id = ot.technologie_id
+
+    WHERE o.id = ?
+
+    GROUP BY o.id, e.nom
+    `,
     [id],
   );
+
   return rows[0];
 }
 async function createOffer(offerData) {
@@ -138,9 +178,69 @@ async function createOffer(offerData) {
     connection.release();
   }
 }
+async function updateOffer(id, offerData) {
+  const connection = await pool.getConnection();
 
+  try {
+    await connection.beginTransaction();
+    await connection.execute(
+      `
+      UPDATE offre
+      SET
+        titre = ?,
+        description_courte = ?,
+        description = ?,
+        profil_recherche = ?,
+        ville = ?,
+        type_contrat = ?,
+        date_publication = ?,
+        lien_candidature = ?,
+        entreprise_id = ?
+      WHERE id = ?
+      `,
+      [
+        offerData.titre,
+        offerData.description_courte,
+        offerData.description,
+        offerData.profil_recherche,
+        offerData.ville,
+        offerData.type_contrat,
+        offerData.date_publication,
+        offerData.lien_candidature ||null,
+        offerData.entreprise_id,
+        id,
+      ],
+    );
+    await connection.execute(
+      `
+      DELETE FROM offre_technologie
+      WHERE offre_id = ?
+      `,
+      [id],
+    );
+    for (const technologieId of offerData.technologies || []) {
+      await connection.execute(
+        `
+        INSERT INTO offre_technologie (
+          offre_id,
+          technologie_id
+        )
+        VALUES (?, ?)
+        `,
+        [id, technologieId],
+      );
+    }
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
 module.exports = {
   getAllOffers,
   getOfferById,
   createOffer,
+  updateOffer,
 };
