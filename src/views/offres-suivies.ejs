@@ -1,0 +1,95 @@
+<%- include("partials/header", {
+  title: "Offres suivies",
+  currentPage: "followed"
+}) %>
+
+<main class="page-space">
+
+  <div class="container">
+
+    <!-- ================= HEADER PAGE ================= -->
+
+    <div class="follow-top">
+
+      <div>
+
+        <span class="eyebrow">
+          ▣ ESPACE APPRENANT • STOCKAGE LOCAL (LOCALSTORAGE)
+        </span>
+
+        <h1>Mes offres suivies</h1>
+
+        <p class="muted">
+          Retrouvez et gérez les opportunités que vous avez enregistrées
+          depuis votre navigateur.
+        </p>
+
+      </div>
+
+
+      <div class="follow-actions">
+
+        <div class="saved-count">
+          ▣
+          <strong id="saved-count">
+            0 offres enregistrées
+          </strong>
+        </div>
+
+        <button
+          id="clear-followed"
+          class="btn btn-secondary"
+          type="button"
+        >
+          ▥ Tout effacer
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= TITLE ================= -->
+
+    <div class="follow-title-row">
+
+      <h2>
+        Opportunités actives
+        <span class="summary-chip">
+          Temps réel
+        </span>
+      </h2>
+
+      <span class="muted">
+        Synchronisé automatiquement
+      </span>
+
+    </div>
+
+
+    <!-- ================= OFFRES ================= -->
+
+    <div
+      id="saved-container"
+      class="saved-grid"
+    >
+      <!-- suivies.js va générer les cartes ici -->
+    </div>
+
+  </div>
+
+</main>
+
+
+<%- include("partials/mobile-nav", {
+  currentPage: "followed"
+}) %>
+
+
+<script
+  type="module"
+  src="/js/suivies.js"
+></script>
+
+
+<%- include("partials/footer") %>
