@@ -238,9 +238,34 @@ async function updateOffer(id, offerData) {
     connection.release();
   }
 }
+async function deleteOffer(id){
+  const connection = await pool.getConnection();
+  try{
+    await connection.beginTransaction();
+    await connection.execute(
+      ` DELETE FROM offre_technologie WHERE offre_id = ?
+      `,
+      [id],
+    );
+    const[result] = await connection.execute(
+      `
+        DELETE FROM offre WHERE id = ?
+      `,
+      [id],
+    );
+      await connection.commit();
+      return result.affectedRows;
+  }catch(error){
+      await connection.rollback();
+      throw error;
+  }finally{
+    connection.release();
+  }
+}
 module.exports = {
   getAllOffers,
   getOfferById,
   createOffer,
   updateOffer,
+  deleteOffer,
 };
