@@ -1,18 +1,262 @@
-<h1><%= offer.titre %></h1>
+<%- include("partials/header", {
+  title: offer.titre,
+  currentPage: "offers"
+}) %>
 
-<p>
-  <strong>Entreprise :</strong>
-  <%= offer.entreprise %>
-</p>
 
-<p>
-  <strong>Ville :</strong>
-  <%= offer.ville %>
-</p>
+<main class="page-space">
 
-<p>
-  <strong>Description :</strong>
-  <%= offer.description %>
-</p>
+  <div class="container">
 
-<a href="/offers">Retour aux offres</a>
+    <!-- ================= BACK ================= -->
+
+    <div class="detail-topline">
+
+      <a
+        class="back-link"
+        href="/offers"
+      >
+        ← Retour à la liste des offres
+      </a>
+
+    </div>
+
+
+    <!-- ================= OFFER DETAIL ================= -->
+
+    <div id="offer-detail">
+
+      <article class="card job-card">
+
+
+        <!-- ================= HEADER ================= -->
+
+        <div class="job-head">
+
+          <div class="job-title-wrap">
+
+            <!-- Initials -->
+
+            <div class="logo-box">
+
+              <%= offer.entreprise
+                .split(" ")
+                .map((word) => word[0])
+                .join("")
+                .toUpperCase()
+              %>
+
+            </div>
+
+
+            <div>
+
+              <h1>
+                <%= offer.titre %>
+              </h1>
+
+              <div class="company-line">
+
+                <%= offer.entreprise %>
+                •
+                <%= offer.ville %>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Contract -->
+
+          <span
+            class="badge badge-contract <%= offer.type_contrat === 'Stage'
+              ? 'badge-stage'
+              : 'badge-alternance'
+            %>"
+          >
+            <%= offer.type_contrat %>
+          </span>
+
+        </div>
+
+
+        <!-- ================= SHORT DESCRIPTION ================= -->
+
+        <p class="job-description">
+          <%= offer.description_courte %>
+        </p>
+
+
+        <!-- ================= TECHNOLOGIES ================= -->
+
+        <div class="badges">
+
+          <% if (offer.technologies) { %>
+
+            <% offer.technologies
+              .split(",")
+              .forEach((technologie) => { %>
+
+                <span class="badge">
+                  <%= technologie %>
+                </span>
+
+            <% }) %>
+
+          <% } %>
+
+        </div>
+
+
+        <hr>
+
+
+        <!-- ================= DESCRIPTION ================= -->
+
+        <section>
+
+          <h2>
+            Description du poste
+          </h2>
+
+          <p>
+            <%= offer.description %>
+          </p>
+
+        </section>
+
+
+        <!-- ================= PROFIL ================= -->
+
+        <% if (offer.profil_recherche) { %>
+
+          <section>
+
+            <h2>
+              Profil recherché
+            </h2>
+
+            <p>
+              <%= offer.profil_recherche %>
+            </p>
+
+          </section>
+
+        <% } %>
+
+
+        <!-- ================= INFORMATIONS ================= -->
+
+        <section>
+
+          <h2>
+            Informations sur l'offre
+          </h2>
+
+          <p>
+            <strong>Entreprise :</strong>
+            <%= offer.entreprise %>
+          </p>
+
+          <p>
+            <strong>Ville :</strong>
+            <%= offer.ville %>
+          </p>
+
+          <p>
+            <strong>Type de contrat :</strong>
+            <%= offer.type_contrat %>
+          </p>
+
+          <p>
+
+            <strong>Date de publication :</strong>
+
+            <%= new Date(
+              offer.date_publication
+            ).toLocaleDateString("fr-FR") %>
+
+          </p>
+
+        </section>
+
+
+        <!-- ================= ACTIONS ================= -->
+
+        <div
+          class="job-actions"
+          style="
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 24px;
+          "
+        >
+
+          <!-- Follow -->
+
+          <button
+            class="btn-follow"
+            data-id="<%= offer.id %>"
+            type="button"
+            aria-label="Suivre l'offre"
+          >
+            ☆
+          </button>
+
+
+          <!-- Apply -->
+
+          <% if (offer.lien_candidature) { %>
+
+            <a
+              class="btn btn-primary"
+              href="<%= offer.lien_candidature %>"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Postuler →
+            </a>
+
+          <% } %>
+
+
+          <!-- Back -->
+
+          <a
+            class="btn btn-secondary"
+            href="/offers"
+          >
+            Retour aux offres
+          </a>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- ================= MOBILE NAV ================= -->
+
+<%- include("partials/mobile-nav", {
+  currentPage: "offers"
+}) %>
+
+
+<!-- ================= FOLLOW ================= -->
+
+<script
+  type="module"
+  src="/js/follow.js"
+></script>
+
+
+<%- include("partials/footer") %>
