@@ -117,6 +117,24 @@ app.post('/admin/offers/:id/edit', async(req,res)=>{
     );
   }
 });
+app.post('/admin/offers/:id/delete', async(req,res)=>{
+  try{
+    const id = Number(req.params.id);
+    if(Number.isNaN(id)){
+      return res.status(400).send('ID invalide');
+    }
+    const deleteRows = await offerRepository.deleteOffer(id);
+    if(deleteRows === 0){
+      return res.status(404).send('Offre introuvable');
+    }
+    res.redirect('/admin/offers');
+  }catch(error){
+    console.log(error);
+    res.status(500).send(
+      "Error lors de la suppression de l'offre"
+    );
+  }
+})
 app.post("/admin/offers", async (req, res) => {
   try {
     let technologies = req.body.technologies || [];
