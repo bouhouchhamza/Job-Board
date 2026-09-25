@@ -57,6 +57,66 @@ app.get("/admin/offers/new", async (req, res) => {
     res.status(500).send("Erreur serveur");
   }
 });
+app.get('/admin/offers/:id/edit', async(req,res)=>{
+  try{
+    const id = Number(req.params.id);
+    if(Number.isNaN(id)){
+      return res.status(400).send('ID invalide');
+    }
+    const [offer,entreprises,technologies] =  await Promise.all([
+      offerRepository.getOfferById(id),
+      entrepriseRepository.getAllEntreprises(),
+      technologieRepository.getAllTechnologies(),
+    ]);
+    if(!offer){
+      return res.status(404).send('Offre introuvable');
+    }
+    const selectedTechnologyIds = offer.technologie_ids ? offer.technologie_ids 
+    .split(',').map((id)=>Number(id)) : [];
+    res.render('admin/edit-offer',{
+      offer,
+      entreprises,
+      technologies,
+      selectedTechnologyIds,
+    })
+  }catch(error){
+    console.error(error);
+    res.status(500).send('Erreur serveur');
+
+  }
+});
+app.post('/admin/offers/:id/edit', async(req,res)=>{
+  try{
+    const id = Number(req.params.id);
+    if(Number.isNaN(id)){
+      return res.status(400).send('ID invalide');
+    }
+    let technologies = req.body.technologies || [];
+    if(!Array.isArray(technologies)){
+      technologies = [technologies];
+    }
+    technologies = technologies.map((technologyId)=>Number(technologyId)).filter((technologyId)=> !Number.isNaN(technologyId));
+    const offerData = {
+      titre: req.body.titre,
+      description_courte: req.body.description_courte,
+      description: req.body.description,
+      profil_recherche: req.body.profil_recherche,
+      ville: req.body.ville,
+      type_contrat: req.body.type_contrat,
+      date_publication: req.body.date_publication,
+      lien_candidature: req.body.lien_candidature,
+      entreprise_id: Number(req.body.entreprise_id),
+      technologies,
+    };
+    await offerRepository.updateOffer(id, offerData);
+    res.redirect('/admin/offers');
+  }catch(error){
+    console.error(error);
+    res.status(500).send(
+      "Error lors de la modification de l'offer"
+    );
+  }
+});
 app.post("/admin/offers", async (req, res) => {
   try {
     let technologies = req.body.technologies || [];
