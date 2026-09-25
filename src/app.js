@@ -6,6 +6,9 @@ const offerRepository = require("./repositories/offreRepository");
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use("/css", express.static(path.join(__dirname, "../css")));
+app.use("/assets", express.static(path.join(__dirname, "../assets")));
+app.use("/js", express.static(path.join(__dirname, "../js")));
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   console.log("Request received: ", req.method, req.url);
