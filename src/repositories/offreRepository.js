@@ -79,8 +79,68 @@ async function getOfferById(id) {
   );
   return rows[0];
 }
+async function createOffer(offerData) {
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    const [result] = await connection.execute(
+      `
+      INSERT INTO offre (
+        titre,
+        description_courte,
+        description,
+        profil_recherche,
+        ville,
+        type_contrat,
+        date_publication,
+        lien_candidature,
+        entreprise_id
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      [
+        offerData.titre,
+        offerData.description_courte,
+        offerData.description,
+        offerData.profil_recherche,
+        offerData.ville,
+        offerData.type_contrat,
+        offerData.date_publication,
+        offerData.lien_candidature || null,
+        offerData.entreprise_id,
+      ],
+    );
+
+    const offerId = result.insertId;
+
+    for (const technologieId of offerData.technologies || []) {
+      await connection.execute(
+        `
+        INSERT INTO offre_technologie (
+          offre_id,
+          technologie_id
+        )
+        VALUES (?, ?)
+        `,
+        [offerId, technologieId],
+      );
+    }
+
+    await connection.commit();
+
+    return offerId;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
 
 module.exports = {
   getAllOffers,
   getOfferById,
+  createOffer,
 };
