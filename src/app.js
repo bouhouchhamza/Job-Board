@@ -3,6 +3,9 @@ const express = require("express");
 const path = require("path");
 // const pool = require("./config/db");
 const offerRepository = require("./repositories/offreRepository");
+const entrepriseRepository = require("./repositories/entrepriseRepository");
+const technologieRepository = require("./repositories/technologieRepository");
+const { promises } = require("dns");
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -25,29 +28,35 @@ app.use((req, res, next) => {
 //         res.status(500).send('Database conection error')
 //     }
 // });
-app.get("/admin/offers", async(req, res) => {
-      try{
-        const offers = await offerRepository.getAllOffers();
-        res.render('admin/offers', {
-          offers,
-        });
-      }catch(error){
-        console.error(error);
-        res.status(500).send('Erreur serveur');
-      }
+app.get("/admin/offers", async (req, res) => {
+  try {
+    const offers = await offerRepository.getAllOffers();
+    res.render("admin/offers", {
+      offers,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erreur serveur");
+  }
 });
 // app.post("/admin/offers", (req,res)=>{
 //   console.log(req.body);
 //   res.send("data recue");
 // })
-app.get("/admin/offers/new", (req, res) => {
-  res.send(`
-            <form action="/admin/offers" method='POST'>
-                <input type="text" name="titre" placeholder="Titre" />
-                <input type="text" name="ville" placeholder="Ville" />
-                <button type="submit">Ajouter</button>
-            </form>
-        `);
+app.get('/admin/offers/new',async(req,res)=>{
+  try{
+    const[entreprises,technologies] = await Promise.all([
+      entrepriseRepository.getAllEntreprises(),
+      technologieRepository.getAllTechnologies(),
+    ]);
+    res.render('admin/new-offer',{
+      entreprises,
+      technologies,
+    })
+  }catch(error){
+    console.error(error);
+      res.status(500).send('Erreur serveur');
+  }
 });
 app.get("/", (req, res) => {
   res.send("Job Board srever in running");
