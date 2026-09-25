@@ -1,76 +1,383 @@
-<form action="/offers" method="GET">
+<%- include("partials/header", {
+  title: "Liste des offres",
+  currentPage: "offers"
+}) %>
 
-    <input
-        type="text"
-        name="search"
-        placeholder="Rechercher..."
-        value="<%= filters.search || '' %>"
+<main>
+
+  <!-- ================= HERO ================= -->
+
+  <section class="hero">
+    <div class="container">
+
+      <span class="eyebrow">
+        ● PROMO MERN 2026/2027 • PORTAIL ÉTUDIANT
+      </span>
+
+      <h1>
+        Trouvez votre stage ou alternance web
+      </h1>
+
+      <p class="lead">
+        Centralisez et explorez toutes les opportunités adaptées aux
+        apprenants en développement web.
+      </p>
+
+
+      <!-- ================= SEARCH / FILTERS ================= -->
+
+      <form
+        class="panel search-panel"
+        action="/offers"
+        method="GET"
+      >
+
+        <div class="search-row">
+
+          <!-- Search -->
+
+          <input
+            class="field"
+            type="search"
+            name="search"
+            placeholder="⌕ Rechercher par poste, entreprise, mot-clé..."
+            value="<%= filters.search || '' %>"
+          />
+
+
+          <!-- Ville -->
+
+          <input
+            class="field"
+            type="text"
+            name="ville"
+            placeholder="Ville"
+            value="<%= filters.ville || '' %>"
+          />
+
+
+          <!-- Technologie -->
+
+          <input
+            class="field"
+            type="text"
+            name="technologie"
+            placeholder="Technologie"
+            value="<%= filters.technologie || '' %>"
+          />
+
+
+          <!-- Contrat -->
+
+          <select
+            class="field"
+            name="type_contrat"
+          >
+
+            <option value="">
+              Tous les contrats
+            </option>
+
+            <option
+              value="CDI"
+              <%= filters.type_contrat === "CDI" ? "selected" : "" %>
+            >
+              CDI
+            </option>
+
+            <option
+              value="CDD"
+              <%= filters.type_contrat === "CDD" ? "selected" : "" %>
+            >
+              CDD
+            </option>
+
+            <option
+              value="Stage"
+              <%= filters.type_contrat === "Stage" ? "selected" : "" %>
+            >
+              Stage
+            </option>
+
+          </select>
+
+
+          <!-- Sort -->
+
+          <select
+            class="field"
+            name="sort"
+          >
+
+            <option
+              value="newest"
+              <%= filters.sort !== "oldest" ? "selected" : "" %>
+            >
+              Plus récentes
+            </option>
+
+            <option
+              value="oldest"
+              <%= filters.sort === "oldest" ? "selected" : "" %>
+            >
+              Plus anciennes
+            </option>
+
+          </select>
+
+
+          <button
+            class="btn btn-primary"
+            type="submit"
+          >
+            Filtrer
+          </button>
+
+
+          <a
+            class="btn btn-secondary"
+            href="/offers"
+          >
+            ↻ Réinitialiser
+          </a>
+
+        </div>
+
+      </form>
+
+    </div>
+  </section>
+
+
+  <!-- ================= OFFRES ================= -->
+
+  <section class="container">
+
+    <!-- ================= SUMMARY ================= -->
+
+    <div class="offer-summary">
+
+      <div class="offer-summary-left">
+
+        <h2 id="results-count">
+          <%= offers.length %> offres disponibles
+        </h2>
+
+        <span class="summary-chip">
+          <span class="status-dot"></span>
+          Mis à jour aujourd'hui
+        </span>
+
+      </div>
+
+
+      <div class="offer-summary-right muted small">
+
+        Statut :
+
+        <span class="summary-chip">
+          Affichage des annonces correspondantes
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= CARDS ================= -->
+
+    <div
+      class="jobs-grid"
+      id="offers-container"
     >
 
-    <input
-        type="text"
-        name="ville"
-        placeholder="Ville"
-        value="<%= filters.ville || '' %>"
-    >
+      <% if (offers.length === 0) { %>
 
-    <input
-        type="text"
-        name="technologie"
-        placeholder="Technologie"
-        value="<%= filters.technologie || '' %>"
-    >
+        <!-- Empty state -->
 
-    <select name="type_contrat">
-        <option value="">Tous les contrats</option>
+        <div class="empty-box">
 
-        <option value="CDI"
-            <%= filters.type_contrat === "CDI" ? "selected" : "" %>>
-            CDI
-        </option>
+          <div class="empty-inner">
 
-        <option value="CDD"
-            <%= filters.type_contrat === "CDD" ? "selected" : "" %>>
-            CDD
-        </option>
+            <div class="empty-icon">
+              ⌕
+            </div>
 
-        <option value="Stage"
-            <%= filters.type_contrat === "Stage" ? "selected" : "" %>>
-            Stage
-        </option>
-    </select>
+            <h2>
+              Aucune offre ne correspond à vos critères
+            </h2>
 
-    <select name="sort">
-        <option value="newest"
-            <%= filters.sort !== "oldest" ? "selected" : "" %>>
-            Plus récentes
-        </option>
+            <p class="muted">
+              Essayez de modifier ou réinitialiser vos filtres.
+            </p>
 
-        <option value="oldest"
-            <%= filters.sort === "oldest" ? "selected" : "" %>>
-            Plus anciennes
-        </option>
-    </select>
+          </div>
 
-    <button type="submit">
-        Filtrer
-    </button>
+        </div>
 
-</form>
-<p><%= offers.length %> offres trouvées</p>
 
-<% offers.forEach((offer) => { %>
+      <% } else { %>
 
-  <article>
-    <h2><%= offer.titre %></h2>
 
-    <p><%= offer.entreprise %></p>
-    <p><%= offer.ville %></p>
-    <p><%= offer.type_contrat %></p>
+        <% offers.forEach((offer) => { %>
 
-    <a href="/offer/<%= offer.id %>">
-      Voir l'offre
-    </a>
-  </article>
 
-<% }) %>
+          <article class="card job-card">
+
+            <!-- ================= CARD HEADER ================= -->
+
+            <div class="job-head">
+
+              <div class="job-title-wrap">
+
+                <!-- Logo / Initials -->
+
+                <div class="logo-box">
+
+                  <%= offer.entreprise
+                    .split(" ")
+                    .map((word) => word[0])
+                    .join("")
+                    .toUpperCase()
+                  %>
+
+                </div>
+
+
+                <div>
+
+                  <h3>
+                    <%= offer.titre %>
+                  </h3>
+
+                  <div class="company-line">
+
+                    <%= offer.entreprise %>
+                    •
+                    <%= offer.ville %>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Contract badge -->
+
+              <span
+                class="badge badge-contract <%= offer.type_contrat === 'Stage'
+                  ? 'badge-stage'
+                  : 'badge-alternance'
+                %>"
+              >
+                <%= offer.type_contrat %>
+              </span>
+
+            </div>
+
+
+            <!-- ================= DESCRIPTION ================= -->
+
+            <p class="job-description">
+              <%= offer.description_courte %>
+            </p>
+
+
+            <!-- ================= TECHNOLOGIES ================= -->
+
+            <div class="badges">
+
+              <% if (offer.technologies) { %>
+
+                <% offer.technologies
+                  .split(",")
+                  .forEach((technologie) => { %>
+
+                    <span class="badge">
+                      <%= technologie %>
+                    </span>
+
+                <% }) %>
+
+              <% } %>
+
+            </div>
+
+
+            <!-- ================= CARD FOOTER ================= -->
+
+            <div class="job-footer">
+
+              <div class="job-date">
+
+                <%= new Date(
+                  offer.date_publication
+                ).toLocaleDateString("fr-FR") %>
+
+              </div>
+
+
+              <div
+                class="job-actions"
+                style="
+                  display: flex;
+                  gap: 8px;
+                  align-items: center;
+                "
+              >
+
+                <!-- Follow -->
+
+                <button
+                  class="btn-follow"
+                  data-id="<%= offer.id %>"
+                  type="button"
+                  aria-label="Suivre l'offre"
+                >
+                  ☆
+                </button>
+
+
+                <!-- Detail -->
+
+                <a
+                  class="btn btn-primary"
+                  href="/offer/<%= offer.id %>"
+                >
+                  Voir l'offre →
+                </a>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        <% }) %>
+
+      <% } %>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- ================= MOBILE NAV ================= -->
+
+<%- include("partials/mobile-nav", {
+  currentPage: "offers"
+}) %>
+
+
+<!-- ================= FOLLOW ================= -->
+
+<script
+  type="module"
+  src="/js/follow.js"
+></script>
+
+
+<%- include("partials/footer") %>
