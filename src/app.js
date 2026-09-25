@@ -1,10 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const offerRepository = require("./repositories/offreRepository");
 const adminRoutes = require("./routes/adminRoutes");
 const publicRoutes = require("./routes/publicRoutes");
-
+const apiRoutes = require("./routes/apiRoutes");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -19,17 +18,7 @@ app.use((req, res, next) => {
 });
 app.use("/admin", adminRoutes);
 app.use("/", publicRoutes);
-app.get("/api/offers", async (req, res) => {
-  try {
-    const offers = await offerRepository.getAllOffers();
-    res.json(offers);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Error serveur",
-    });
-  }
-});
+app.use("/api", apiRoutes);
 app.listen(3000, () => {
   console.log("server is running on port 3000");
 });
