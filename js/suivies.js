@@ -1,73 +1,229 @@
-import { fetchOffers } from "./data.js";
-import { renderOffers, renderLoading, renderError } from "./render.js";
-import { getFollowedOfferIds, toggleFollowOffer } from "./storage.js";
+import {
+  getFollowedOfferIds,
+  toggleFollowOffer,
+} from "./storage.js";
 
 const container = document.querySelector("#saved-container");
-let followedOffers = [];
+const countElement = document.querySelector("#saved-count");
+const clearButton = document.querySelector("#clear-followed");
 
-function updateFollowedBadge() {
-  const badge = document.querySelector('a[href="offres-suivies.html"]');
-  if (!badge) return;
-  const count = getFollowedOfferIds().length;
-  badge.textContent = `Offres suivies (${count})`;
-}
 
-async function initSuivies() {
+async function loadFollowedOffers() {
   try {
-    renderLoading(container);
-
-    // 1. Fetch all offers and read followed IDs from localStorage
-    const allOffers = await fetchOffers();
     const followedIds = getFollowedOfferIds();
 
-    // 2. Filter offers whose IDs are in localStorage
-    followedOffers = allOffers.filter((offer) =>
-      followedIds.includes(Number(offer.id)),
-    );
-
-    // 3. Render the followed offers or an empty state message
-    if (followedOffers.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <p>Vous n'avez pas encore d'offres suivies.</p>
-          <a href="index.html" class="btn btn-primary">Explorer les offres</a>
-        </div>
-      `;
-    } else {
-      renderOffers(followedOffers, container);
+    if (followedIds.length === 0) {
+      renderEmpty();
+      updateCount(0);
+      return;
     }
 
-    updateFollowedBadge();
+    const response = await fetch("/api/offers");
 
-    // 4. Handle unfollowing directly from this page
-    container.addEventListener("click", (e) => {
-      const followBtn = e.target.closest(".btn-follow");
-      if (!followBtn) return;
+    if (!response.ok) {
+      throw new Error("Impossible de charger les offres");
+    }
 
-      const offerId = Number(followBtn.dataset.id);
-      toggleFollowOffer(offerId);
+    const offers = await response.json();
 
-      // Re-filter and re-render without reloading the page
-      const updatedIds = getFollowedOfferIds();
-      followedOffers = followedOffers.filter((o) => updatedIds.includes(o.id));
+    const followedOffers = offers.filter((offer) =>
+      followedIds.includes(Number(offer.id))
+    );
 
-      if (followedOffers.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <p>Vous n'avez plus d'offres suivies.</p>
-            <a href="index.html" class="btn btn-primary">Explorer les offres</a>
-          </div>
-        `;
-      } else {
-        renderOffers(followedOffers, container);
-      }
+    renderFollowedOffers(followedOffers);
 
-      updateFollowedBadge();
-    });
+    updateCount(followedOffers.length);
+
   } catch (error) {
     console.error(error);
-    renderError(container);
+
+    container.innerHTML = `
+      <div class="empty-box">
+        <div class="empty-inner">
+          <p>Impossible de charger les offres suivies.</p>
+        </div>
+      </div>
+    `;
   }
 }
 
-initSuivies();
+
+function renderFollowedOffers(offers) {
+  if (offers.length === 0) {
+    renderEmpty();
+    return;
+  }
+
+  container.innerHTML = offers
+    .map((offer) => {
+
+      const initials = offer.entreprise
+        .split(" ")
+        .map((word) => word[0])
+        .join("")
+        .toUpperCase();
+
+      const technologies = offer.technologies
+        ? offer.technologies.split(",")
+        : [];
+
+      const contractClass =
+        offer.type_contrat === "Stage"
+          ? "badge-stage"
+          : "badge-alternance";
+
+      return `
+        <article class="card saved-card">
+
+          <div class="saved-card-main">
+
+            <div class="job-head">
+
+              <div class="job-title-wrap">
+
+                <div class="logo-box">
+                  ${initials}
+                </div>
+
+                <div>
+                  <h3>${offer.titre}</h3>
+
+                  <div class="company-line">
+                    ${offer.entreprise} • ${offer.ville}
+                  </div>
+                </div>
+
+              </div>
+
+              <span class="badge badge-contract ${contractClass}">
+                ${offer.type_contrat}
+              </span>
+
+            </div>
+
+            <p class="job-description">
+              ${offer.description_courte}
+            </p>
+
+            <div class="badges">
+
+              ${technologies
+                .map(
+                  (technologie) =>
+                    `<span class="badge">${technologie}</span>`
+                )
+                .join("")}
+
+            </div>
+
+          </div>
+
+          <div class="saved-card-footer">
+
+            <div class="job-date">
+              ${new Date(
+                offer.date_publication
+              ).toLocaleDateString("fr-FR")}
+            </div>
+
+            <div class="job-actions">
+
+              <a
+                class="btn btn-primary"
+                href="/offer/${offer.id}"
+              >
+                Voir l'offre →
+              </a>
+
+              <button
+                class="btn btn-secondary btn-remove-follow"
+                data-id="${offer.id}"
+                type="button"
+              >
+                ✕ Retirer
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+      `;
+    })
+    .join("");
+
+  addRemoveListeners();
+}
+
+
+function addRemoveListeners() {
+  const removeButtons =
+    document.querySelectorAll(".btn-remove-follow");
+
+  removeButtons.forEach((button) => {
+
+    button.addEventListener("click", () => {
+
+      const offerId = Number(button.dataset.id);
+
+      toggleFollowOffer(offerId);
+
+      loadFollowedOffers();
+    });
+
+  });
+}
+
+
+function renderEmpty() {
+  container.innerHTML = `
+    <div class="empty-box">
+
+      <div class="empty-inner">
+
+        <div class="empty-icon">
+          ♧
+        </div>
+
+        <h2>
+          Aucune offre suivie
+        </h2>
+
+        <p class="muted">
+          Vous n'avez pas encore enregistré d'offre.
+          Parcourez les offres et ajoutez celles qui vous intéressent.
+        </p>
+
+        <a
+          class="btn btn-primary"
+          href="/offers"
+        >
+          ⌕ Découvrir les offres
+        </a>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+function updateCount(count) {
+  countElement.textContent =
+    `${count} offre${count > 1 ? "s" : ""} enregistrée${count > 1 ? "s" : ""}`;
+}
+
+
+clearButton.addEventListener("click", () => {
+
+  const followedIds = getFollowedOfferIds();
+
+  followedIds.forEach((id) => {
+    toggleFollowOffer(id);
+  });
+
+  loadFollowedOffers();
+});
+
+
+loadFollowedOffers();
