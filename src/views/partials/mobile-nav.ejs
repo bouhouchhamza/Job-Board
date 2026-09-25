@@ -1,0 +1,38 @@
+<nav
+  class="mobile-bottom-nav"
+  aria-label="Navigation mobile"
+>
+
+  <a
+    href="/offers"
+    class="<%= currentPage === 'offers' ? 'active' : '' %>"
+  >
+    <span class="bottom-icon">▣</span>
+    <span>Offres</span>
+  </a>
+
+  <a
+    href="/admin/offers/new"
+    class="<%= currentPage === 'create' ? 'active' : '' %>"
+  >
+    <span class="bottom-icon">▤</span>
+    <span>Déposer</span>
+  </a>
+
+  <a
+    href="/offres-suivies"
+    class="<%= currentPage === 'followed' ? 'active' : '' %>"
+  >
+    <span class="bottom-icon">♧</span>
+    <span>Suivies</span>
+  </a>
+
+  <a
+    href="/admin/offers"
+    class="<%= currentPage === 'admin' ? 'active' : '' %>"
+  >
+    <span class="bottom-icon">♙</span>
+    <span>Admin</span>
+  </a>
+
+</nav>
