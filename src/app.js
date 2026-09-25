@@ -82,6 +82,9 @@ app.get("/offer/:id", async (req, res) => {
     });
   }
 });
+app.get("/offres-suivies", (req, res) => {
+  res.render("offres-suivies");
+});
 app.get("/offers", async (req, res) => {
   try {
     const ville = req.query.ville;
