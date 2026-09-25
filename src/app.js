@@ -42,6 +42,17 @@ app.get("/admin/offers/new", (req, res) => {
 app.get("/", (req, res) => {
   res.send("Job Board srever in running");
 });
+app.get("/api/offers", async (req, res) => {
+  try {
+    const offers = await offerRepository.getAllOffers();
+    res.json(offers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error serveur",
+    });
+  }
+});
 app.get("/offer/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
