@@ -1,89 +1,84 @@
 <!doctype html>
 <html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %> - JobBoard</title>
 
-  <title><%= title %> - JobBoard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
 
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
+  <body>
+    <header class="site-header">
+      <div class="container navbar">
+        <a href="/offers" class="brand">
+          <span class="brand-mark">▣</span>
 
-<body>
+          <span>
+            <span class="brand-title">JobBoard</span>
 
-  <header class="site-header">
-    <div class="container navbar">
-
-      <a href="/offers" class="brand">
-        <span class="brand-mark">▣</span>
-
-        <span>
-          <span class="brand-title">JobBoard</span>
-
-          <span class="brand-subtitle" style="display: block">
-            Portail Stages & Alternances
+            <span class="brand-subtitle" style="display: block">
+              Portail Stages & Alternances
+            </span>
           </span>
-        </span>
-      </a>
-
-      <nav class="desktop-nav" aria-label="Navigation principale">
-
-        <a
-          class="nav-link <%= currentPage === 'offers' ? 'active' : '' %>"
-          href="/offers"
-        >
-          Offres
         </a>
 
-        <a
-          class="nav-link <%= currentPage === 'create' ? 'active' : '' %>"
-          href="/admin/offers/new"
+        <nav
+          id="primary-navigation"
+          class="desktop-nav"
+          aria-label="Navigation principale"
         >
-          Déposer une offre
-        </a>
+          <a
+            class="nav-link <%= currentPage === 'offers' ? 'active' : '' %>"
+            href="/offers"
+          >
+            Offres
+          </a>
 
-        <a
-          class="nav-link <%= currentPage === 'followed' ? 'active' : '' %>"
-          href="/offres-suivies"
-        >
-          Offres suivies
-        </a>
+          <a
+            class="nav-link <%= currentPage === 'create' ? 'active' : '' %>"
+            href="/admin/offers/new"
+          >
+            Déposer une offre
+          </a>
 
-      </nav>
+          <a
+            class="nav-link <%= currentPage === 'followed' ? 'active' : '' %>"
+            href="/offres-suivies"
+          >
+            Offres suivies
+          </a>
+        </nav>
 
-      <div style="display: flex; align-items: center; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <a class="admin-pill" href="/admin/offers">
+            ♙ Administration
+            <small>Admin</small>
+          </a>
 
-        <a class="admin-pill" href="/admin/offers">
-          ♙ Administration
-          <small>Admin</small>
-        </a>
-
-        <button
-          class="user-button"
-          type="button"
-          aria-label="Utilisateur"
-        >
-          ♙
-        </button>
-
-        <button
-          class="mobile-menu"
-          type="button"
-          aria-label="Menu"
-        >
-          ☰
-        </button>
-
+          <button class="user-button" type="button" aria-label="Utilisateur">
+            ♙
+          </button>
+          <button
+            class="mobile-menu"
+            type="button"
+            aria-label="Menu"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+          >
+            ☰
+          </button>
+        </div>
       </div>
-
-    </div>
-  </header>
+    </header>
+  </body>
+</html>
