@@ -25,11 +25,21 @@ app.use((req, res, next) => {
 //         res.status(500).send('Database conection error')
 //     }
 // });
-app.post("/admin/offers", (req, res) => {
-  console.log(req.body);
-  res.send("Data recue");
+app.get("/admin/offers", async(req, res) => {
+      try{
+        const offers = await offerRepository.getAllOffers();
+        res.render('admin/offers', {
+          offers,
+        });
+      }catch(error){
+        console.error(error);
+        res.status(500).send('Erreur serveur');
+      }
 });
-
+// app.post("/admin/offers", (req,res)=>{
+//   console.log(req.body);
+//   res.send("data recue");
+// })
 app.get("/admin/offers/new", (req, res) => {
   res.send(`
             <form action="/admin/offers" method='POST'>
