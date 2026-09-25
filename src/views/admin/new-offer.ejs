@@ -1,0 +1,310 @@
+<%- include("../partials/header", {
+  title: "Ajouter une offre",
+  currentPage: "create"
+}) %>
+
+<main class="page-space">
+
+  <div class="container">
+
+    <div class="follow-top">
+
+      <div>
+
+        <span class="eyebrow">
+          ♙ ESPACE ADMINISTRATION
+        </span>
+
+        <h1>Ajouter une offre</h1>
+
+        <p class="muted">
+          Publiez une nouvelle opportunité sur la plateforme.
+        </p>
+
+      </div>
+
+      <a
+        href="/admin/offers"
+        class="btn btn-secondary"
+      >
+        ← Retour aux offres
+      </a>
+
+    </div>
+
+
+    <form
+      action="/admin/offers"
+      method="POST"
+      class="panel"
+    >
+
+      <!-- Titre -->
+
+      <div>
+        <label for="titre">
+          Titre de l'offre
+        </label>
+
+        <input
+          id="titre"
+          class="field"
+          type="text"
+          name="titre"
+          required
+        />
+      </div>
+
+
+      <!-- Entreprise -->
+
+      <div>
+        <label for="entreprise_id">
+          Entreprise
+        </label>
+
+        <select
+          id="entreprise_id"
+          class="field"
+          name="entreprise_id"
+          required
+        >
+
+          <option value="">
+            Sélectionner une entreprise
+          </option>
+
+          <% entreprises.forEach((entreprise) => { %>
+
+            <option value="<%= entreprise.id %>">
+              <%= entreprise.nom %>
+            </option>
+
+          <% }) %>
+
+        </select>
+
+      </div>
+
+
+      <!-- Ville -->
+
+      <div>
+        <label for="ville">
+          Ville
+        </label>
+
+        <input
+          id="ville"
+          class="field"
+          type="text"
+          name="ville"
+          required
+        />
+      </div>
+
+
+      <!-- Contrat -->
+
+      <div>
+
+        <label for="type_contrat">
+          Type de contrat
+        </label>
+
+        <select
+          id="type_contrat"
+          class="field"
+          name="type_contrat"
+          required
+        >
+
+          <option value="">
+            Choisir un contrat
+          </option>
+
+          <option value="Stage">
+            Stage
+          </option>
+
+          <option value="Alternance">
+            Alternance
+          </option>
+
+          <option value="CDD">
+            CDD
+          </option>
+
+          <option value="CDI">
+            CDI
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- Description courte -->
+
+      <div>
+
+        <label for="description_courte">
+          Description courte
+        </label>
+
+        <textarea
+          id="description_courte"
+          class="field"
+          name="description_courte"
+          rows="3"
+          required
+        ></textarea>
+
+      </div>
+
+
+      <!-- Description -->
+
+      <div>
+
+        <label for="description">
+          Description complète
+        </label>
+
+        <textarea
+          id="description"
+          class="field"
+          name="description"
+          rows="6"
+          required
+        ></textarea>
+
+      </div>
+
+
+      <!-- Profil -->
+
+      <div>
+
+        <label for="profil_recherche">
+          Profil recherché
+        </label>
+
+        <textarea
+          id="profil_recherche"
+          class="field"
+          name="profil_recherche"
+          rows="5"
+          required
+        ></textarea>
+
+      </div>
+
+
+      <!-- Date -->
+
+      <div>
+
+        <label for="date_publication">
+          Date de publication
+        </label>
+
+        <input
+          id="date_publication"
+          class="field"
+          type="date"
+          name="date_publication"
+          required
+        />
+
+      </div>
+
+
+      <!-- Candidature -->
+
+      <div>
+
+        <label for="lien_candidature">
+          Lien de candidature
+        </label>
+
+        <input
+          id="lien_candidature"
+          class="field"
+          type="url"
+          name="lien_candidature"
+          placeholder="https://..."
+        />
+
+      </div>
+
+
+      <!-- Technologies -->
+
+      <div>
+
+        <label>
+          Technologies
+        </label>
+
+        <div class="badges">
+
+          <% technologies.forEach((technologie) => { %>
+
+            <label class="badge">
+
+              <input
+                type="checkbox"
+                name="technologies[]"
+                value="<%= technologie.id %>"
+              />
+
+              <%= technologie.nom %>
+
+            </label>
+
+          <% }) %>
+
+        </div>
+
+      </div>
+
+
+      <!-- Actions -->
+
+      <div
+        style="
+          display: flex;
+          gap: 10px;
+          margin-top: 24px;
+        "
+      >
+
+        <button
+          class="btn btn-primary"
+          type="submit"
+        >
+          Ajouter l'offre
+        </button>
+
+        <a
+          href="/admin/offers"
+          class="btn btn-secondary"
+        >
+          Annuler
+        </a>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</main>
+
+
+<%- include("../partials/mobile-nav", {
+  currentPage: "create"
+}) %>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,230 @@
+<form
+  action="<%= formAction %>"
+  method="POST"
+  class="panel"
+>
+
+  <div>
+    <label for="titre">Titre de l'offre</label>
+
+    <input
+      id="titre"
+      class="field"
+      type="text"
+      name="titre"
+      value="<%= offer ? offer.titre : '' %>"
+      required
+    />
+  </div>
+
+
+  <div>
+    <label for="entreprise_id">Entreprise</label>
+
+    <select
+      id="entreprise_id"
+      class="field"
+      name="entreprise_id"
+      required
+    >
+
+      <option value="">
+        Sélectionner une entreprise
+      </option>
+
+      <% entreprises.forEach((entreprise) => { %>
+
+        <option
+          value="<%= entreprise.id %>"
+          <%= offer && Number(offer.entreprise_id) === Number(entreprise.id)
+            ? "selected"
+            : "" %>
+        >
+          <%= entreprise.nom %>
+        </option>
+
+      <% }) %>
+
+    </select>
+  </div>
+
+
+  <div>
+    <label for="ville">Ville</label>
+
+    <input
+      id="ville"
+      class="field"
+      type="text"
+      name="ville"
+      value="<%= offer ? offer.ville : '' %>"
+      required
+    />
+  </div>
+
+
+  <div>
+    <label for="type_contrat">Type de contrat</label>
+
+    <select
+      id="type_contrat"
+      class="field"
+      name="type_contrat"
+      required
+    >
+
+      <option value="">Choisir un contrat</option>
+
+      <% ["Stage", "Alternance", "CDD", "CDI"].forEach((type) => { %>
+
+        <option
+          value="<%= type %>"
+          <%= offer && offer.type_contrat === type
+            ? "selected"
+            : "" %>
+        >
+          <%= type %>
+        </option>
+
+      <% }) %>
+
+    </select>
+  </div>
+
+
+  <div>
+    <label for="description_courte">
+      Description courte
+    </label>
+
+    <textarea
+      id="description_courte"
+      class="field"
+      name="description_courte"
+      rows="3"
+      required
+    ><%= offer ? offer.description_courte : '' %></textarea>
+  </div>
+
+
+  <div>
+    <label for="description">
+      Description complète
+    </label>
+
+    <textarea
+      id="description"
+      class="field"
+      name="description"
+      rows="6"
+      required
+    ><%= offer ? offer.description : '' %></textarea>
+  </div>
+
+
+  <div>
+    <label for="profil_recherche">
+      Profil recherché
+    </label>
+
+    <textarea
+      id="profil_recherche"
+      class="field"
+      name="profil_recherche"
+      rows="5"
+      required
+    ><%= offer ? offer.profil_recherche : '' %></textarea>
+  </div>
+
+
+  <div>
+    <label for="date_publication">
+      Date de publication
+    </label>
+
+    <input
+      id="date_publication"
+      class="field"
+      type="date"
+      name="date_publication"
+      value="<%= offer && offer.date_publication
+        ? new Date(offer.date_publication).toISOString().slice(0, 10)
+        : '' %>"
+      required
+    />
+  </div>
+
+
+  <div>
+    <label for="lien_candidature">
+      Lien de candidature
+    </label>
+
+    <input
+      id="lien_candidature"
+      class="field"
+      type="url"
+      name="lien_candidature"
+      value="<%= offer && offer.lien_candidature
+        ? offer.lien_candidature
+        : '' %>"
+      placeholder="https://..."
+    />
+  </div>
+
+
+  <div>
+
+    <label>Technologies</label>
+
+    <div class="badges">
+
+      <% technologies.forEach((technologie) => { %>
+
+        <label class="badge">
+
+          <input
+            type="checkbox"
+            name="technologies[]"
+            value="<%= technologie.id %>"
+            <%= selectedTechnologyIds.includes(Number(technologie.id))
+              ? "checked"
+              : "" %>
+          />
+
+          <%= technologie.nom %>
+
+        </label>
+
+      <% }) %>
+
+    </div>
+
+  </div>
+
+
+  <div
+    style="
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    "
+  >
+
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
+      <%= submitLabel %>
+    </button>
+
+    <a
+      href="/admin/offers"
+      class="btn btn-secondary"
+    >
+      Annuler
+    </a>
+
+  </div>
+
+</form>

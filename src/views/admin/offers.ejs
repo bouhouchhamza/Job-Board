@@ -1,0 +1,263 @@
+<%- include("../partials/header", {
+  title: "Administration des offres",
+  currentPage: "admin"
+}) %>
+
+<main class="page-space">
+
+  <div class="container">
+
+    <!-- ================= PAGE HEADER ================= -->
+
+    <div class="follow-top">
+
+      <div>
+
+        <span class="eyebrow">
+          ♙ ESPACE ADMINISTRATION
+        </span>
+
+        <h1>
+          Gestion des offres
+        </h1>
+
+        <p class="muted">
+          Consultez et gérez toutes les offres disponibles sur la plateforme.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        <a
+          href="/admin/offers/new"
+          class="btn btn-primary"
+        >
+          + Ajouter une offre
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= SUMMARY ================= -->
+
+    <div class="follow-title-row">
+
+      <h2>
+        <%= offers.length %> offres
+      </h2>
+
+      <span class="summary-chip">
+        Administration
+      </span>
+
+    </div>
+
+
+    <!-- ================= OFFERS ================= -->
+
+    <div class="jobs-grid">
+
+      <% if (offers.length === 0) { %>
+
+        <!-- Empty state -->
+
+        <div class="empty-box">
+
+          <div class="empty-inner">
+
+            <h2>
+              Aucune offre disponible
+            </h2>
+
+            <p class="muted">
+              Commencez par ajouter une nouvelle offre.
+            </p>
+
+            <a
+              href="/admin/offers/new"
+              class="btn btn-primary"
+            >
+              + Ajouter une offre
+            </a>
+
+          </div>
+
+        </div>
+
+
+      <% } else { %>
+
+
+        <% offers.forEach((offer) => { %>
+
+          <article class="card job-card">
+
+
+            <!-- ================= HEADER ================= -->
+
+            <div class="job-head">
+
+              <div class="job-title-wrap">
+
+                <div class="logo-box">
+
+                  <%= offer.entreprise
+                    .split(" ")
+                    .map((word) => word[0])
+                    .join("")
+                    .toUpperCase()
+                  %>
+
+                </div>
+
+
+                <div>
+
+                  <h3>
+                    <%= offer.titre %>
+                  </h3>
+
+                  <div class="company-line">
+
+                    <%= offer.entreprise %>
+                    •
+                    <%= offer.ville %>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Contract badge -->
+
+              <span
+                class="badge badge-contract <%= offer.type_contrat === 'Stage'
+                  ? 'badge-stage'
+                  : 'badge-alternance'
+                %>"
+              >
+                <%= offer.type_contrat %>
+              </span>
+
+            </div>
+
+
+            <!-- ================= DESCRIPTION ================= -->
+
+            <p class="job-description">
+              <%= offer.description_courte %>
+            </p>
+
+
+            <!-- ================= TECHNOLOGIES ================= -->
+
+            <div class="badges">
+
+              <% if (offer.technologies) { %>
+
+                <% offer.technologies
+                  .split(",")
+                  .forEach((technologie) => { %>
+
+                    <span class="badge">
+                      <%= technologie %>
+                    </span>
+
+                <% }) %>
+
+              <% } %>
+
+            </div>
+
+
+            <!-- ================= FOOTER ================= -->
+
+            <div class="job-footer">
+
+              <div class="job-date">
+
+                <%= new Date(
+                  offer.date_publication
+                ).toLocaleDateString("fr-FR") %>
+
+              </div>
+
+
+              <!-- ================= ACTIONS ================= -->
+
+              <div
+                class="job-actions"
+                style="
+                  display: flex;
+                  gap: 8px;
+                  flex-wrap: wrap;
+                  align-items: center;
+                "
+              >
+
+                <!-- Voir -->
+
+                <a
+                  class="btn btn-secondary"
+                  href="/offer/<%= offer.id %>"
+                >
+                  Voir
+                </a>
+
+
+                <!-- Modifier -->
+
+                <a
+                  class="btn btn-secondary"
+                  href="/admin/offers/<%= offer.id %>/edit"
+                >
+                  Modifier
+                </a>
+
+
+                <!-- Supprimer -->
+
+                <form
+                  action="/admin/offers/<%= offer.id %>/delete"
+                  method="POST"
+                  onsubmit="return confirm('Voulez-vous vraiment supprimer cette offre ?');"
+                  style="margin: 0;"
+                >
+
+                  <button
+                    class="btn btn-secondary"
+                    type="submit"
+                  >
+                    Supprimer
+                  </button>
+
+                </form>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        <% }) %>
+
+      <% } %>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<%- include("../partials/mobile-nav", {
+  currentPage: "admin"
+}) %>
+
+<%- include("../partials/footer") %>
